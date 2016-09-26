@@ -6,6 +6,7 @@
   "author": "Haralan Dobrev",
   "license": "MIT",
   "dependencies": {
+    "reveal-ga": "^0.1.0",
     "reveal.js": "^3.3.0"
   },
   "devDependencies": {

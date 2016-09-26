@@ -11,5 +11,8 @@
   },
   "devDependencies": {
     "inliner": "^1.9.5"
+  },
+  "scripts": {
+    "dist": "inliner --nocompress --inlinemin source.html > dist.html"
   }
 }

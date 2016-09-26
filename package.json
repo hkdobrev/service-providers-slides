@@ -1,0 +1,14 @@
+{
+  "name": "service-providers-slides",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "author": "Haralan Dobrev",
+  "license": "MIT",
+  "dependencies": {
+    "reveal.js": "^3.3.0"
+  },
+  "devDependencies": {
+    "inliner": "^1.9.5"
+  }
+}

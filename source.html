@@ -168,6 +168,11 @@
                             Here we've moved out the creation of new Beer instances
                             and instead have injected a BeerFactory which can create
                             new beers for us.
+
+                            Some people think dependency injection is when the framework is
+                            auto-magically injecting the required dependencies.
+
+                            Some examples are AngularJS 1.x, Laravel service container, Silex actions.
                         </script>
                     </section>
                 </section>
@@ -230,31 +235,130 @@
                                 }
                             }
                             </code></pre>
+
+                            Note:
+
+                            We can go a step further and get the preferred beer type
+                            of the attendee and we can do that by using interfaces.
+
+                            The attendee interface here does not assume the beer preference capability
+                            which achieves the Interface segregation principle.
+
+                            The beer factory can create a default beer type if null is passed.
                         </script>
                     </section>
                 </section>
                 <section data-markdown>
                     <script type="text/template">
+                        Pushing Creation Upwards
+                        ------------------------
+
+                        - Meetup needs Brewery and BeerFactory instances
+                        - MeetupManager will need to create them and create the Meetup.
+                        - MeetupManager could have Brewery, BeerFactory and MeetupFactory injected.
+                        - Controller will need to create them all to be able to inject them in MeetupManager.
+                        - Bootstrap code will need to prepare everything and inject it into the Controller.
+
+                        Note:
+
+                        To implement dependency injection properly you will need to push
+                        creation of dependencies up and up until you reach the top.
+
+                        ---
+
+                        Here's where dependency injection container comes into play.
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
                         Dependency injection container
-                        --------------------
+                        ------------------------------
 
                         <pre><code data-trim data-noescape class="php">
-                        class Meetup
+                        $c = [];
+
+                        $c['beer.default'] = 'Bernard';
+                        $c['beer.factory'] = new BeerFactory($c['beer.default']);
+                        $c['brewery'] = new Brewery();
+
+                        $c['meetup.class'] = 'Meetup';
+                        $c['meetup.factory'] = new MeetupFactory(
+                            $c['meetup.class'],
+                            $c['brewery'],
+                            $c['beer.factory']
+                        );
+                        $c['meetup.manager'] = new MeetupManager($c['meetup.factory']);
+                        </code></pre>
+
+                        Note:
+
+                        Here's a very simple version of a container.
+                        It's just an array which holds configuration and instantiated services.
+                        You can imagine this is just pseudo code for a more robust
+                        dependency injection container with lazy instances allowing
+                        to override configuration.
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        Service locator
+                        ---------------
+
+                        Dependency injection container could be used as a service&nbsp;locator.
+
+                        <pre><code data-trim data-noescape class="php">
+                        class MeetupController
                         {
-                            public function addAttendee(AttendeeInterface $attendee)
+                            public function actionShow($container)
                             {
-                                $this->attendees[] = $attendee;
-                                $preferredBeerType = null;
-
-                                if ($attendee implements BeerPreferenceInterface) {
-                                    $preferredBeerType = $attendee->getPreferredBeerType();
-                                }
-
-                                $beer = $this->beerFactory->createBeer($preferredBeerType);
-                                $this->brewery->orderBeer($beer);
+                                $meetup = $container['meetup.factory']->createMeetup();
                             }
                         }
                         </code></pre>
+
+                        Note:
+
+                        The service locator pattern is about injecting the whole container
+                        in the classes that would need services out of it.
+
+                        In most cases this could be considered an anti-pattern
+                        and you can probably see why.
+                        - You hide the real dependencies of the class.
+                        - It's harder to test.
+                        - It couples the configuration of the container with the code in the services.
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        ~~Service locator~~
+                        -------------------
+
+                        <pre><code data-trim data-noescape class="php">
+                        class MeetupController
+                        {
+                            public function actionShow(MeetupManager $meetupManager)
+                            {
+                                $meetup = $meetupManager->getMeetupFactory()->createMeetup();
+                            }
+                        }
+                        </code></pre>
+
+                        <pre><code data-trim data-noescape class="php">
+                        $controller = new MeetupController();
+                        $controller->actionShow($c['meetup.manager']);
+                        </code></pre>
+
+                        Note:
+
+                        When using the dependency injection container the services should not know about it.
+                        They would continue to abide the dependency injection pattern.
+                        The dependency injection container would be used from outside the services.
+                        Of course some parts of a framework using a DIC could use it directly
+                        to instantiate services and inject their dependencies.
+
+                        The part of the system which would call the action would
+                        probably know about the DIC, but the controller would not.
+                        It would just expect things to be injected.
                     </script>
                 </section>
             </div>

@@ -72,8 +72,8 @@
                             Note:
 
                             We have a Meetup class with the ability to add attendees.
-                            Whenever it adds a new attendee, the Meetup class needs to order more beer.
-                            It creates a new Beer instance and uses the Brewery to order it.
+                            Whenever it adds a new attendee, the `Meetup` class needs to order more beer.
+                            It creates a new `Beer` instance and uses the `Brewery` to order it.
                         </script>
                     </section>
                     <section data-markdown data-transition="none-in slide-out">
@@ -100,8 +100,8 @@
 
                             Note:
 
-                            Beer and Brewery are dependencies of the Meetup class.
-                            Actually a Meetup cannot possibly function without them.
+                            `Beer` and `Brewery` are dependencies of the `Meetup` class.
+                            Actually a meetup cannot possibly function without them.
                         </script>
                     </section>
                 </section>
@@ -134,8 +134,8 @@
                             which has a simple goal. Move dependency creation out of the class
                             and inject ready instances via the constructor or setters.
 
-                            You can see we've injected the Brewery as a dependency.
-                            It needs to be created prior to creating the Meetup instance.
+                            You can see we've injected the `Brewery` as a dependency.
+                            It needs to be created prior to creating the `Meetup` instance.
                         </script>
                     </section>
                     <section data-markdown data-transition="none-in slide-out">
@@ -165,8 +165,8 @@
 
                             Note:
 
-                            Here we've moved out the creation of new Beer instances
-                            and instead have injected a BeerFactory which can create
+                            Here we've moved out the creation of new `Beer` instances
+                            and instead have injected a `BeerFactory` which can create
                             new beers for us.
 
                             Some people think dependency injection is when the framework is
@@ -253,10 +253,10 @@
                         Pushing Creation Upwards
                         ------------------------
 
-                        - Meetup needs Brewery and BeerFactory instances
-                        - MeetupManager will need to create them and create the Meetup.
-                        - MeetupManager could have Brewery, BeerFactory and MeetupFactory injected.
-                        - Controller will need to create them all to be able to inject them in MeetupManager.
+                        - `Meetup` needs `Brewery` and `BeerFactory` instances
+                        - `MeetupManager` will need to create them and create the `Meetup`.
+                        - `MeetupManager` could have `Brewery`, `BeerFactory` and `MeetupFactory` injected.
+                        - Controller will need to create them all to be able to inject them in `MeetupManager`.
                         - Bootstrap code will need to prepare everything and inject it into the Controller.
 
                         Note:

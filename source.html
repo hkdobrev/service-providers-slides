@@ -492,6 +492,141 @@
                         which would be correctly passed to the services.
                     </script>
                 </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        Pimple and Silex
+                        ----------------
+
+                        - Silex 1 depends on Pimple 1.
+                        - Silex 1 has the ability to register service providers.
+                        - Silex 2 depends on Pimple 3
+                        - Pimple 3 introduced the ability to register service providers.
+
+                        Note:
+
+                        Pimple is a very simple dependency injection container.
+                        Silex is a micro-framework on top of Pimple and some Symfony components.
+                    </script>
+                </section>
+                <section>
+                    <section data-markdown data-transition="slide-in none-out">
+                        <script type="text/template">
+                            Reusing service providers
+                            -------------------------
+
+                            - Using Silex 2 and Pimple 3
+                            - Using Laravel and Lumen
+
+                            Note:
+
+                            - Using Silex 2 and Pimple 3 you can create service providers depending only on Pimple.
+                            - You need to use only the register methods and do everything lazily.
+                            - Another example is Laravel and Lumen which share the Laravel service container.
+                        </script>
+                    </section>
+                    <section data-markdown data-transition="none-in slide-out">
+                        <script type="text/template">
+                            Reusing service providers
+                            -------------------------
+
+                            <pre><code data-trim data-noescape class="php">
+                            class MyServiceProvider implements Pimple\ServiceProviderInterface
+                            {
+                                public function register(Pimple\Container $container)
+                                {
+                                    // do not rely on Silex application here
+                                }
+                            }
+                            </code></pre>
+                        </script>
+                    </section>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        PSR-11
+                        ------
+
+                        - Some are based on callbacks (Pimple, Laravel)
+                        - Others are based on configuration (Symfony, ZF) - arrays, YAML / XML files
+                        - Some can leverage factories
+                        - Some have a PHP API to build entries (PHP-DI, ZF, Symfony, Mouf)
+                        - Some can do auto-wiring (Laravel, PHP-DI)
+                        - Others can wire entries based on annotations (PHP-DI, JMS Bundle)
+                        - Some have a graphical user interface (Mouf)
+                        - Some can compile configuration files to PHP classes (Symfony, ZF)
+
+                        Note:
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        PSR-11
+                        ------
+
+                        `ContainerInterface`
+
+                        <pre><code data-trim data-noescape class="php">
+                        interface ContainerInterface
+                        {
+                            public function get($id);
+
+                            public function has($id);
+                        }
+                        </code></pre>
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        Container Interop
+                        -----------------
+
+                        - [Acclimate](https://github.com/jeremeamia/acclimate-container)
+                        - [League/Container](http://container.thephpleague.com/)
+                        - [PHP-DI](http://php-di.org/)
+                        - [PimpleInterop](https://github.com/moufmouf/pimple-interop), [Pimple3-ContainerInterop](https://github.com/Sam-Burns/pimple3-containerinterop)
+                        - [Zend\ServiceManager](https://github.com/zendframework/zend-servicemanager)
+
+                        Note:
+
+                        The project which preceded PSR-11 is Container Interop.
+                        A number of projects already support it.
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        Standard service providers
+                        --------------------------
+
+                        [github.com/container-interop/service-provider](https://github.com/container-interop/service-provider)
+
+                        <div class="fragment">
+                        <pre><code data-trim data-noescape class="php">
+                        interface ServiceProvider
+                        {
+                            public function getServices();
+                        }
+                        </code></pre>
+                        </div>
+
+                        Note:
+
+                        Container Interop has another interesting project - Standard service providers.
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        Haralan Dobrev
+                        --------------
+
+                        [@hkdobrev](https://twitter.com/hkdobrev)
+
+                        CTO @ [Clippings.com](https://clippings.com)
+
+                        [clippings.github.io](https://clippings.github.io)
+
+                        Thanks!
+                    </script>
+                </section>
             </div>
         </div>
         <script src="node_modules/reveal.js/lib/js/classList.js"></script>

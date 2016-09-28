@@ -263,26 +263,112 @@
                         </script>
                     </section>
                 </section>
-                <section data-markdown>
-                    <script type="text/template">
-                        Pushing Creation Upwards
-                        ------------------------
+                <section>
+                    <section data-markdown data-transition="slide-in none-out">
+                        <script type="text/template">
+                            Pushing Creation Upwards
+                            ------------------------
 
-                        - `Meetup` needs `Brewery` and `BeerFactory` instances
-                        - `MeetupManager` will need to create them and create the `Meetup`.
-                        - `MeetupManager` could have `Brewery`, `BeerFactory` and `MeetupFactory` injected.
-                        - Controller will need to create them all to be able to inject them in `MeetupManager`.
-                        - Bootstrap code will need to prepare everything and inject it into the Controller.
+                            `Meetup` needs `Brewery` and `BeerFactory` instances
 
-                        Note:
+                            <pre><code data-trim data-noescape class="php">
+                            class Meetup
+                            {
+                                public function __construct(
+                                    Brewery $brewery,
+                                    BeerFactory $beerFactory
+                                );
+                            }
+                            </code></pre>
 
-                        To implement dependency injection properly you will need to push
-                        creation of dependencies up and up until you reach the top.
+                            Note:
 
-                        ---
+                            To implement dependency injection properly you will need to push
+                            creation of dependencies up and up until you reach the top.
 
-                        Here's where dependency injection container comes into play.
-                    </script>
+                            ---
+
+                            Here's where dependency injection container comes into play.
+                        </script>
+                    </section>
+                    <section data-markdown data-transition="none-in none-out">
+                        <script type="text/template">
+                            Pushing Creation Upwards
+                            ------------------------
+
+                            `MeetupManager` will need to create them and create the&nbsp;`Meetup`.
+
+                            <pre><code data-trim data-noescape class="php">
+                            class MeetupManager
+                            {
+                                public function createMeetup()
+                                {
+                                    return new Meetup(
+                                        new Brewery(),
+                                        new BeerFactory()
+                                    );
+                                }
+                            }
+                            </code></pre>
+                        </script>
+                    </section>
+                    <section data-markdown data-transition="none-in none-out">
+                        <script type="text/template">
+                            Pushing Creation Upwards
+                            ------------------------
+
+                            `MeetupManager` could have `Brewery`, `BeerFactory` and `MeetupFactory` injected.
+
+                            <pre><code data-trim data-noescape class="php">
+                            class MeetupManager
+                            {
+                                public function __construct(
+                                    Brewery $brewery,
+                                    BeerFactory $beerFactory,
+                                    MeetupFactory $meetupFactory
+                                );
+                            }
+                            </code></pre>
+                        </script>
+                    </section>
+                    <section data-markdown data-transition="none-in none-out">
+                        <script type="text/template">
+                            Pushing Creation Upwards
+                            ------------------------
+
+                            Controller will need to create them all to be able to inject them in `MeetupManager`.
+
+                            <pre><code data-trim data-noescape class="php">
+                            class Controller
+                            {
+                                public function actionShow()
+                                {
+                                    new MeetupManager(
+                                        new Brewery(),
+                                        new BeerFactory(),
+                                        new MeetupFactory()
+                                    );
+                                }
+                            }
+                            </code></pre>
+                        </script>
+                    </section>
+                    <section data-markdown data-transition="none-in slide-out">
+                        <script type="text/template">
+                            Pushing Creation Upwards
+                            ------------------------
+
+                            Bootstrap code will need to prepare everything and inject it into the Controller.
+
+                            <pre><code data-trim data-noescape class="php">
+                            $controller->actionShow(new MeetupManager(
+                                new Brewery(),
+                                new BeerFactory(),
+                                new MeetupFactory()
+                            ));
+                            </code></pre>
+                        </script>
+                    </section>
                 </section>
                 <section data-markdown>
                     <script type="text/template">

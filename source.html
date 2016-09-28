@@ -361,6 +361,36 @@
                         It would just expect things to be injected.
                     </script>
                 </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        Service providers
+                        -----------------
+
+                        <div class="fragment">
+                        <pre><code data-trim data-noescape class="php">
+                        $container->register(new DoctrineServiceProvider(), [
+                            'db.options' => [
+                                'db.name' => 'meetups',
+                            ],
+                        ]);
+                        </code></pre>
+                        </div>
+
+                        Note:
+
+                        Configuring a few services with a dependency injection container
+                        is easy. However when you have a ton of services in a larger application
+                        and there a lot of services that depend on each other you can
+                        make your life easier by using a service provider.
+
+                        ---
+
+                        Here is an example of `Pimple` and `DoctrineServiceProvider`.
+                        The service provider is a simple class which can register one or several
+                        services in the DIC and allow you to configure a few parameters
+                        which would be correctly passed to the services.
+                    </script>
+                </section>
             </div>
         </div>
         <script src="node_modules/reveal.js/lib/js/classList.js"></script>

@@ -1780,7 +1780,243 @@ based on dark.css by Ivan Sagalaev
                         ## Writing reusable service providers
                     </script>
                 </section>
-                <section>Slide 2</section>
+                <section data-markdown="">
+                    <script type="text/template">
+                        Things we'd discuss
+                        --------------------
+
+                        - Dependency injection
+                        - Dependency injection container
+                        - Difference from Service locator
+                        - Service providers
+                        - Silex 2.x and Pimple 3.x
+                        - Reusing service providers
+                        - PSR 11, ContainerInterface, PSR 11 meta
+                        - Pimple interop
+
+                        Note:
+
+                        I'll start with a rather long intro where I'll go
+                        through some basic principles and best practices.
+                        What's a dependency and dependency injection?
+                        Dependency injection container and how not to use it as a service locator.
+                        When service providers help.
+                        Examples of service providers with Silex 2.x and Pimple 3.x.
+                        Reusing service providers between frameworks.
+                        PSR11 and interoperability.
+                    </script>
+                </section>
+                <section>
+                    <section data-markdown="" data-transition="slide-in none-out">
+                        <script type="text/template">
+                            What's a dependency?
+                            --------------------
+
+                            <pre><code data-trim data-noescape class="php">
+                            class Meetup
+                            {
+                                public function __construct()
+                                {
+                                    $this->brewery = new Brewery();
+                                }
+
+                                public function addAttendee(Attendee $attendee)
+                                {
+                                    $this->attendees[] = $attendee;
+                                    $beer = new Beer('Bernard');
+                                    $this->brewery->orderBeer($beer);
+                                }
+                            }
+                            </code></pre>
+
+                            Note:
+
+                            We have a Meetup class with the ability to add attendees.
+                            Whenever it adds a new attendee, the Meetup class needs to order more beer.
+                            It creates a new Beer instance and uses the Brewery to order it.
+                        </script>
+                    </section>
+                    <section data-markdown="" data-transition="none-in slide-out">
+                        <script type="text/template">
+                            What's a dependency?
+                            --------------------
+
+                            <pre><code data-trim data-noescape class="php">
+                            class Meetup
+                            {
+                                public function __construct()
+                                {
+                                    <mark>$this->brewery = new Brewery();</mark>
+                                }
+
+                                public function addAttendee(Attendee $attendee)
+                                {
+                                    $this->attendees[] = $attendee;
+                                    <mark>$beer = new Beer('Bernard');</mark>
+                                    $this->brewery->orderBeer($beer);
+                                }
+                            }
+                            </code></pre>
+
+                            Note:
+
+                            Beer and Brewery are dependencies of the Meetup class.
+                            Actually a Meetup cannot possibly function without them.
+                        </script>
+                    </section>
+                </section>
+                <section>
+                    <section data-markdown="" data-transition="slide-in none-out">
+                        <script type="text/template">
+                            Dependency injection
+                            --------------------
+
+                            <pre><code data-trim data-noescape class="php">
+                            class Meetup
+                            {
+                                public function __construct(Brewery $brewery)
+                                {
+                                    <mark>$this->brewery = $brewery;</mark>
+                                }
+
+                                public function addAttendee(Attendee $attendee)
+                                {
+                                    $this->attendees[] = $attendee;
+                                    $beer = new Beer('Bernard');
+                                    $this->brewery->orderBeer($beer);
+                                }
+                            }
+                            </code></pre>
+
+                            Note:
+
+                            Dependency injection is nothing more than a design pattern
+                            which has a simple goal. Move dependency creation out of the class
+                            and inject ready instances via the constructor or setters.
+
+                            You can see we've injected the Brewery as a dependency.
+                            It needs to be created prior to creating the Meetup instance.
+                        </script>
+                    </section>
+                    <section data-markdown="" data-transition="none-in slide-out">
+                        <script type="text/template">
+                            Dependency injection
+                            --------------------
+
+                            <pre><code data-trim data-noescape class="php">
+                            class Meetup
+                            {
+                                public function __construct(
+                                    Brewery $brewery,
+                                    BeerFactory $beerFactory
+                                ) {
+                                    $this->brewery = $brewery;
+                                    <mark>$this->beerFactory = $beerFactory;</mark>
+                                }
+
+                                public function addAttendee(Attendee $attendee)
+                                {
+                                    $this->attendees[] = $attendee;
+                                    <mark>$beer = $this->beerFactory->createBeer('Bernard');</mark>
+                                    $this->brewery->orderBeer($beer);
+                                }
+                            }
+                            </code></pre>
+
+                            Note:
+
+                            Here we've moved out the creation of new Beer instances
+                            and instead have injected a BeerFactory which can create
+                            new beers for us.
+                        </script>
+                    </section>
+                </section>
+                <section>
+                    <section data-markdown="" data-transition="slide-in none-out">
+                        <script type="text/template">
+                            Dependency inversion
+                            --------------------
+
+                            - "**D**" in **SOLID**
+                            - Principle which inverts dependencies from top-down to bottom-up
+                            - Allows flexibility, mobility and decoupling
+                        </script>
+                    </section>
+                    <section data-markdown="" data-transition="none-in none-out">
+                        <script type="text/template">
+                            Dependency inversion
+                            --------------------
+
+                            <pre><code data-trim data-noescape class="php">
+                            class Meetup
+                            {
+                                public function __construct(
+                                    BreweryInterface $brewery,
+                                    BeerFactoryInterface $beerFactory
+                                ) {
+                                    $this->brewery = $brewery;
+                                    $this->beerFactory = $beerFactory;
+                                }
+
+                                public function addAttendee(AttendeeInterface $attendee)
+                                {
+                                    $this->attendees[] = $attendee;
+                                    $beer = $this->beerFactory->createBeer('Bernard');
+                                    $this->brewery->orderBeer($beer);
+                                }
+                            }
+                            </code></pre>
+                        </script>
+                    </section>
+                    <section data-markdown="" data-transition="none-in slide-out">
+                        <script type="text/template">
+                            Dependency inversion
+                            --------------------
+
+                            <pre><code data-trim data-noescape class="php">
+                            class Meetup
+                            {
+                                public function addAttendee(AttendeeInterface $attendee)
+                                {
+                                    $this->attendees[] = $attendee;
+                                    $preferredBeerType = null;
+
+                                    if ($attendee implements BeerPreferenceInterface) {
+                                        $preferredBeerType = $attendee->getPreferredBeerType();
+                                    }
+
+                                    $beer = $this->beerFactory->createBeer($preferredBeerType);
+                                    $this->brewery->orderBeer($beer);
+                                }
+                            }
+                            </code></pre>
+                        </script>
+                    </section>
+                </section>
+                <section data-markdown="">
+                    <script type="text/template">
+                        Dependency injection container
+                        --------------------
+
+                        <pre><code data-trim data-noescape class="php">
+                        class Meetup
+                        {
+                            public function addAttendee(AttendeeInterface $attendee)
+                            {
+                                $this->attendees[] = $attendee;
+                                $preferredBeerType = null;
+
+                                if ($attendee implements BeerPreferenceInterface) {
+                                    $preferredBeerType = $attendee->getPreferredBeerType();
+                                }
+
+                                $beer = $this->beerFactory->createBeer($preferredBeerType);
+                                $this->brewery->orderBeer($beer);
+                            }
+                        }
+                        </code></pre>
+                    </script>
+                </section>
             </div>
         </div>
         <script>/*! @source http://purl.eligrey.com/github/classList.js/blob/master/classList.js*/

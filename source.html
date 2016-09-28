@@ -211,6 +211,21 @@
                                 }
                             }
                             </code></pre>
+
+                            Note:
+
+                            Here you can see we have changed the type hints to interfaces.
+                            By using interfaces we allow for any implementation
+                            of the interface to be injected. The `Meetup` class states
+                            to anyone who is injecting that it would rely only on the methods
+                            defined in these implementations.
+
+                            This way we could replace any specific implementation with another.
+                            The higher-level service does not define the implementation details anymore.
+
+                            A good example is a payment abstraction library which supports different payment processors.
+                            Instead of the top-level payment library taking care of all the details it can allow
+                            a `PaymentProcessorInterface` instance to be injected.
                         </script>
                     </section>
                     <section data-markdown data-transition="none-in slide-out">
